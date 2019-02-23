@@ -1,0 +1,197 @@
+
+<% include ./partials/header %>
+	
+    <div class="container-fluid  header ">
+    	 <% if(error && error.length > 0){ %>
+            <div class="alert alert-danger" role="alert">
+                <%= error %>
+            </div>
+        <% } %>
+        <% if(success && success.length > 0){ %>
+            <div class="alert alert-success" role="alert">
+                <%= success %>
+            </div>
+        <% } %>
+        <% if(warning && warning.length > 0){ %>
+            <div class="alert alert-warning" role="alert">
+                <%= warning %>
+            </div>
+        <% } %>
+    	<nav class="  navbar navbar-expand-lg ">
+                  <h2 class="navbar-brand h1 "><strong>Buy/Sell Point</strong></h2>
+                  <button class="navbar-toggler bg-warning " type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                    Menu&nbsp;<i class="fas fa-bars"></i>
+                  </button>
+                  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav ml-auto">
+                      <li class="nav-item active ml-lg-5 my-2 my-lg-0">
+                        <a class="nav-link home-link" ><i class="fas fa-home"></i>&nbsp;<strong>Home</strong> <span class="sr-only">(current)</span></a>
+                      </li>
+                      <li class="nav-item ml-lg-5 my-2 my-lg-0">
+                        <a class="nav-link rates-link" ><i class="fas fa-dollar-sign mt-lg-1"></i>&nbsp;<strong>Buy/Sell Rates</strong></a>
+                      </li>
+                      <li class="nav-item ml-lg-5 my-2 my-lg-0">
+                        <a class="nav-link faq-link" ><i class="far fa-question-circle mt-lg-1"></i>&nbsp;<strong>FAQ</strong></a>
+                      </li>
+                      <li class="nav-item ml-lg-5 my-2 my-lg-0">
+                        <a class="nav-link contact-link" ><i class="fab fa-telegram-plane mt-lg-1"></i>&nbsp;<strong>Contact Us</strong></a>
+                      </li>
+                      <% if(!currentUser){ %>
+                      <li class="nav-item ml-lg-5 my-2 my-lg-0">
+                        <a class="btn btn-danger" href="/login"><i class="fas fa-sign-in-alt"></i>&nbsp;Login</a>
+                      </li>
+                      <li class="nav-item ml-lg-3 my-2 my-lg-0">
+                        <a class="btn btn-success" href="/register"><i class="fas fa-user-plus"></i>&nbsp;Register</a>
+                      </li>
+                      <% } else{ %>
+                     
+                      <% if(currentUser.isAdmin){ %>
+                      <li class="nav-item mr-1 my-2 my-lg-0">
+	                    <a href="/admind" class="btn btn-warning "><i class="fas fa-shield-alt"></i>&nbsp;Admin Dashboard</a>
+	                  </li>
+	                  <% } else{ %>
+	                  <li class="nav-item mr-1 my-2 my-lg-0">
+	                    <a href="/userd" class="btn btn-warning "><i class="fas fa-user-circle"></i>&nbsp;User Dashboard</a>
+	                  </li>
+	                  <% } %>
+	                  <li class="nav-item mr-lg-0 my-2 my-lg-0">
+		                    <a href="/logout" class="btn btn-danger "><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</a>
+		              </li>
+		              <% } %>
+                    </ul>
+          
+        </nav>
+		    <h1 class="display-4 text-danger text-center mt-lg-4 home">Buy/Sell PerfectMoney USD, Payeer USD, Advanced Cash USD, Paypal USD India</h1>
+    </div>
+        <section class="mb-5 rates">
+        	<div class="container-fluid my-5">
+        		<div class="card p-3 pb-0 border border-primary ">
+        				<h3 class="h3 text-center">Buy/Sell Rates</h3>
+        				<% rates.lastUpdated.setHours(rates.lastUpdated.getHours() + 5); %>
+            		<% rates.lastUpdated.setMinutes(rates.lastUpdated.getMinutes() + 30);%>
+		            <p class="card-text text-muted text-center">(Last Updated On: <%=rates.lastUpdated.toDateString()%>&nbsp;at&nbsp;<%=rates.lastUpdated.getHours()%>:<%=rates.lastUpdated.getMinutes()%>&nbsp;hours)</p>
+		    		<table class="table table-hover table-responsive-sm">
+					  <thead>
+					    <tr>
+					      <th scope="col" class="text-center"></th>
+					      <th scope="col" class="text-center">You Buy (In INR)</th>
+					      <th scope="col" class="text-center">You Sell(In INR)</th>
+					    </tr>
+					  </thead>
+					  <tbody>
+					    <tr>
+					      <th scope="row" class="text-center">Perfect Money USD</th>
+					      <td scope="col" class="text-center"><%= rates.pmbuy %></td>
+					      <td scope="col" class="text-center"><%= rates.pmsell %></td>
+					    </tr>
+					    <tr>
+					      <th scope="row" class="text-center">Paypal USD</th>
+					      <td scope="col" class="text-center"><%= rates.paypalbuy %></td>
+					      <td scope="col" class="text-center"><%= rates.paypalsell %></td>
+					    </tr>
+					    <tr>
+					      <th scope="row" class="text-center">Advanced Cash USD</th>
+					      <td scope="col" class="text-center"><%= rates.advbuy %></td>
+					      <td scope="col" class="text-center"><%= rates.advsell %></td>
+					    </tr>
+					    <tr>
+					      <th scope="row" class="text-center">Payeer USD</th>
+					      <td scope="col" class="text-center"><%= rates.payeerbuy %></td>
+					      <td scope="col" class="text-center"><%= rates.payeersell %></td>
+					    </tr>
+					  </tbody>
+					</table>
+		        </div>
+        	</div>
+        </section>
+        <section class="container-fluid my-5 faq">
+        	<div class="card p-2 border border-danger">
+		        <h3 class="h3 text-center">Frequently Asked Questions (FAQs)</h3>
+		        <h6 class="h5">Can I transact without registering an account?</h6>
+		        <p class="card-text">Answer: Presently you cannot do that. One has to register for an account and submit transaction form from <strong>User Dashboard</strong>.</p>
+		        <h6 class="h5">Is there any minimum threshold to buy/sell?</h6>
+		        <p class="card-text">Answer: Yes there is a minimum amount for any transaction. A <strong>minimum of USD 15</strong> is required and a <strong>maximum of USD 100</strong> is only allowed.</p>
+		        <h6 class="h5">How much time will it take for the transaction to complete?</h6>
+		        <p class="card-text">Answer: Normally, it gets completed within <strong>two-three hours</strong>. But the <strong>transaction is dropped if it exceeds 2 days</strong>.</p>
+		        <h6 class="h5">How can I know today's buy/sell rates?</h6>
+		        <p class="card-text">Answer: You can refer to the <strong>Buy/Sell Rates</strong> section in our website. The rates are updated daily. You can see when it was last updated. <strong>If the rates are not updated on a particular day, it means that no transactions will take place on that day.</strong></p>
+		        <h6 class="h5">How can I do a buy/sell transaction with Buy/Sell Point?</h6>
+		        <p class="card-text">Answer: Firstly, you have to register for an account by <strong>giving true credentials(as it will be used for further communications)</strong>. Then go to <strong>User Dashboard</strong> and fill the <strong>New Transaction Form</strong> and submit it. We will contact you by mail to complete the transactions.</p>
+		    </div>
+        </section>
+        <section class="container-fluid contact mt-5 mb-2">
+        	<div class="card p-2 border border-success">
+		        <h3 class="h3 text-center">Contact Us</h3>
+		        <div class="row">
+		        <div class="col-lg-6 col-md-5 col-12 p-5">
+		            <p class="card-text">Contact Number (WhatsApp): <i class="fab fa-whatsapp"></i>&nbsp;+91-9562308197 </p>
+		            <p class="card-text">Administrator E-mail: <i class="far fa-envelope"></i>&nbsp;baby.manikantan@gmail.com</p>
+		            <p class="card-text">Technical Support E-mail: <i class="far fa-envelope"></i>&nbsp;vishnumanikantan@engineer.com</p>
+		        </div>
+		        <div class=" col-md-7 col-lg-6 col-12 pb-5 pr-3 mt-2">
+		                    <!--Form with header-->
+
+		                    <form action="/contact" method="POST">
+		                        <div class="card border-primary rounded-0">
+		                            <div class="card-header p-0">
+		                                <div class="bg-info text-white text-center py-2">
+		                                    <h3><i class="fa fa-envelope"></i> Send A Message</h3>
+		                                </div>
+		                            </div>
+		                            <div class="card-body p-3">
+
+		                                <!--Body-->
+		                                <div class="form-group">
+		                                    <div class="input-group mb-2">
+		                                        <div class="input-group-prepend">
+		                                            <div class="input-group-text"><i class="fa fa-user text-info"></i></div>
+		                                        </div>
+		                                        <input type="text" class="form-control" id="name" name="name" placeholder="Full Name" required>
+		                                    </div>
+		                                </div>
+		                                <div class="form-group">
+		                                    <div class="input-group mb-2">
+		                                        <div class="input-group-prepend">
+		                                            <div class="input-group-text"><i class="fa fa-envelope text-info"></i></div>
+		                                        </div>
+		                                        <input type="email" class="form-control" id="name" name="email" placeholder="Enter your email" required>
+		                                    </div>
+		                                </div>
+
+		                                <div class="form-group">
+		                                    <div class="input-group mb-2">
+		                                        <div class="input-group-prepend">
+		                                            <div class="input-group-text"><i class="fa fa-comment text-info"></i></div>
+		                                        </div>
+		                                        <textarea class="form-control" name="message" placeholder="Message" required></textarea>
+		                                    </div>
+		                                </div>
+
+		                                <div class="text-center">
+		                                    <input type="submit" value="Send" class="btn btn-info btn-block rounded-0 py-2">
+		                                </div>
+		                            </div>
+
+		                        </div>
+		                    </form>
+		                    <!--Form with header-->
+		                </div>
+		            </div>
+		    </div>
+        </section>
+        <footer class=" shadow font-weight-light text-white" style="background-color: rgba(48,60,108,0.8);">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-4 col-sm-3"></div>
+                    <div class="col-lg-5 col-sm-6 col-md-8 ml-4 my-5">
+                        <h4 class="h4 py-2">Subscribe for rate updates</h4>
+                        <form class="form-inline">
+                            <input class="form-control mr-sm-2 my-2 col-lg-6 col-sm-12" style="border-radius: 20px;" type="email" placeholder="Email">
+                            <input class="form-control mr-sm-2 my-2 col-lg-3 col-sm-12 btn btn-success m-2" style="border-radius: 20px;" type="submit" value="Subscribe">
+                        </form>
+                    </div>
+                    <div class="col-lg-2 my-auto "><span class="home-link"><i class="fas fa-arrow-up"></i>&nbsp;Back to top</span></div>
+                </div>
+            </div>
+          
+<% include ./partials/footer %>

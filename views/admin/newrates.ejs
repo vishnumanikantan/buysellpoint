@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Dashboard: Buy/Sell Point</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+</head>
+<style type="text/css">
+  html {
+    scroll-behavior: smooth;
+  }
+  /* width */
+  ::-webkit-scrollbar {
+    width: 7px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 2px grey; 
+    border-radius: 20px;
+  }
+   
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: silver; 
+    border-radius: 20px;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: grey; 
+  }
+</style>
+<body>
+  <nav class="shadow p-3  navbar navbar-expand-lg">
+                  <a class="navbar-brand">Welcome, <strong><%=currentUser.firstName%></strong></a>
+                  <button class="navbar-toggler bg-warning" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">Menu&nbsp;<i class="fas fa-bars"></i></button>
+                  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav ml-auto">
+                      <li class="nav-item active ml-lg-5 my-2 my-lg-0">
+                        <a class="nav-link" href="/admind"><i class="fas fa-globe-asia"></i>&nbsp;Admin Dashboard</a>
+                      </li>
+                      <li class="nav-item ml-lg-5 my-2 my-lg-0">
+                        <a class="nav-link" href="/admind/rates"><i class="fas fa-file-invoice-dollar"></i>&nbsp;Set Rates</a>
+                      </li>
+                      <li class="nav-item ml-lg-5 my-2 my-lg-0">
+                        <a class="nav-link" href="/admind/history"><i class="fas fa-history"></i>&nbsp;Transaction History</a>
+                      </li>
+                      <li class="nav-item ml-lg-5 my-2 my-lg-0">
+                        <a class="btn btn-success" href="/"><i class="fas fa-home"></i>&nbsp;Home</a>
+                      </li>
+                      <li class="nav-item ml-lg-5 my-2 my-lg-0">
+                        <a class="btn btn-danger" href="/logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</a>
+                      </li>
+                    </ul>
+                </div>          
+        </nav>
+
+<div class="container-fluid">
+    <% if(error && error.length > 0){ %>
+            <div class="alert alert-danger" role="alert">
+                <%= error %>
+            </div>
+        <% } %>
+        <% if(success && success.length > 0){ %>
+            <div class="alert alert-success" role="alert">
+                <%= success %>
+            </div>
+        <% } %>
+        <% if(warning && warning.length > 0){ %>
+            <div class="alert alert-warning" role="alert">
+                <%= warning %>
+            </div>
+        <% } %>
+    <div class="card p-2 pb-4 mb-4">
+        <h3 class="h3 mx-auto">Set New Rates</h3>
+        <form action="/admind/rates" method="POST" onsubmit="return check()">
+            <div class="container card my-2 mx-auto">
+                <div class="form-group ml-2 mr-5">
+                    <label for="perfectmoney">Perfect Money *</label>
+                    <div class="row">
+                        <div class="col-6">
+                            <input type="number" class="form-control mb-2" id="perfectmoneybuy" placeholder="Buy Rate" name="rates[pmbuy]" required>
+                        </div>
+                        <div class="col-6">
+                            <input type="number" class="form-control mb-2" id="perfectmoneysell" placeholder="Sell Rate" name="rates[pmsell]" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container card my-2 mx-auto">
+                <div class="form-group ml-2 mr-5">
+                    <label for="payeer">Payeer *</label>
+                    <div class="row">
+                        <div class="col-6">
+                            <input type="number" class="form-control mb-2" id="payeerbuy" placeholder="Buy Rate" name="rates[payeerbuy]" required>
+                        </div>
+                        <div class="col-6">
+                            <input type="number" class="form-control mb-2" id="payeersell" placeholder="Sell Rate" name="rates[payeersell]" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container card my-2 mx-auto">
+                <div class="form-group ml-2 mr-5">
+                    <label for="advcash">Advanced Cash *</label>
+                    <div class="row">
+                        <div class="col-6">
+                            <input type="number" class="form-control mb-2" id="advcashbuy" placeholder="Buy Rate" name="rates[advbuy]" required>
+                        </div>
+                        <div class="col-6">
+                            <input type="number" class="form-control mb-2" id="advcashsell" placeholder="Sell Rate" name="rates[advsell]" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container card my-2 mx-auto">
+                <div class="form-group ml-2 mr-5">
+                    <label for="paypal">Paypal *</label>
+                    <div class="row">
+                        <div class="col-6">
+                            <input type="number" class="form-control mb-2" id="paypalbuy" placeholder="Buy Rate" name="rates[paypalbuy]" required>
+                        </div>
+                        <div class="col-6">
+                            <input type="number" class="form-control mb-2" id="paypalsell" placeholder="Sell Rate" name="rates[paypalsell]" required>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-danger btn-lg mx-auto col-3 "><i class="fas fa-share-square"></i>&nbsp;Submit</button>
+            </div>
+                
+
+        </form>
+    </div>
+</div>
+
+<div class="text-center text-white fixed-bottom  py-3" style="background-color: rgba(48,60,108,1); ">
+            Designed, Developed and Maintained by Vishnu Manikantan (WhatsApp: 9061188095) for
+            <span class="home-link"><strong>Buy/Sell Point</strong></span>
+</div>
+</body>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script type="text/javascript">
+  function check(){
+    var pmbuy = Number($('#perfectmoneybuy').val());
+    var pmsell = Number($('#perfectmoneysell').val());
+    var paypalbuy = Number($('#paypalbuy').val());
+    var paypalsell = Number($('#paypalsell').val());
+    var payeerbuy = Number($('#payeerbuy').val());
+    var payeersell = Number($('#payeersell').val());
+    var advbuy = Number($('#advcashbuy').val());
+    var advsell = Number($('#advcashsell').val());
+    if (pmbuy<pmsell) {
+      alert("PerfectMoney buy rate lesser than sell rate. Change the rates immediately");
+      return false;
+    }
+    else if(paypalbuy<paypalsell){
+      alert("Paypal buy rate lesser than sell rate. Change the rates immediately");
+      return false;
+    }
+    else if(payeerbuy<payeersell){
+      alert("Payeer buy rate lesser than sell rate. Change the rates immediately");
+      return false;
+    }
+    else if(advbuy<advsell){
+      alert("Advanced Cash buy rate lesser than sell rate. Change the rates immediately");
+      return false;
+    }
+    else{
+      return true;
+    }
+  }
+</script>
+
+</html>

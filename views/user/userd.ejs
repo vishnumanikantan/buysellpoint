@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>User Dashboard: Buy/Sell Point</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+</head>
+<style type="text/css">
+  html {
+	  scroll-behavior: smooth;
+	}
+	/* width */
+	::-webkit-scrollbar {
+	  width: 7px;
+	}
+
+	/* Track */
+	::-webkit-scrollbar-track {
+	  box-shadow: inset 0 0 2px grey; 
+	  border-radius: 20px;
+	}
+	 
+	/* Handle */
+	::-webkit-scrollbar-thumb {
+	  background: silver; 
+	  border-radius: 20px;
+	}
+
+	/* Handle on hover */
+	::-webkit-scrollbar-thumb:hover {
+	  background: grey; 
+	}
+</style>
+<body>
+	<nav class="shadow p-3  navbar navbar-expand-lg">
+                  <a class="navbar-brand">Welcome, <strong><%=currentUser.firstName%></strong></a>
+                  <button class="navbar-toggler bg-warning" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">Menu&nbsp;<i class="fas fa-bars"></i></button>
+                  <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav ml-auto">
+                      <li class="nav-item ml-lg-5 my-2 my-lg-0">
+                        <a class="nav-link" href="userd"><i class="fas fa-plus"></i> New Transaction</a>
+                      </li>
+                      <li class="nav-item ml-lg-5 my-2 my-lg-0">
+                        <a class="nav-link" href="/userd/transactions"><i class="far fa-clock"></i> Pending Transactions</a>
+                      </li>
+                      <li class="nav-item ml-lg-5 my-2 my-lg-0">
+                        <a class="nav-link" href="/userd/history"><i class="fas fa-history"></i> Transaction History</a>
+                      </li>
+                      <li class="nav-item ml-lg-5 my-2 my-lg-0">
+                        <a class="btn btn-success" href="/"><i class="fas fa-home"></i>&nbsp;Home</a>
+                      </li>
+                      <li class="nav-item ml-lg-5 my-2 my-lg-0">
+                        <a class="btn btn-danger" href="/logout"><i class="fas fa-sign-out-alt"></i>&nbsp;Logout</a>
+                      </li>
+                    </ul>
+                </div>
+          
+        </nav>
+        <% if(error && error.length > 0){ %>
+            <div class="alert alert-danger" role="alert">
+                <%= error %>
+            </div>
+        <% } %>
+        <% if(success && success.length > 0){ %>
+            <div class="alert alert-success" role="alert">
+                <%= success %>
+            </div>
+        <% } %>
+        <% if(warning && warning.length > 0){ %>
+            <div class="alert alert-warning" role="alert">
+                <%= warning %>
+            </div>
+        <% } %>
+        <div class="card p-2 pb-4 mb-4 mx-5">
+            <h3 class="h3 mx-auto">New Transaction Form</h3>
+            
+	        <form action="/userd" class="mx-auto" method="POST" name="transactionForm" onsubmit="return transaction()">
+				<fieldset>
+
+				<!-- Form Name -->
+				
+
+				<!-- Select Basic -->
+				<div class="form-group">
+				  <label class=" control-label" for="transaction[name]">Select Transaction Type</label>
+				  <div class="">
+				    <select id="transaction[name]" name="transaction[name]" class="form-control">
+				      <option value="pmbuy">Buy PerfectMoney USD</option>
+				      <option value="pmsell">Sell PerfectMoney USD</option>
+				      <option value="advbuy">Buy Advanced Cash USD</option>
+				      <option value="advsell">Sell Advanced Cash USD</option>
+				      <option value="payeerbuy">Buy Payeer USD</option>
+				      <option value="payeersell">Sell Payeer USD</option>
+				      <option value="paypalbuy">Buy Paypal USD</option>
+				      <option value="paypalsell">Sell Paypal USD</option>
+				    </select>
+				  </div>
+				</div>
+
+				<!-- Text input-->
+				<div class="form-group">
+				  <label class=" control-label" for="transaction[amount]">Amount</label>  
+				 
+				  <input id="transaction[amount]" name="transaction[amount]" type="Number" min="15" placeholder="Buy/Sell Amount" class="form-control input-md" required="">
+				  <span class="help-block">Minimum amount should be 15</span><br>  
+				  <a id="calculate" class="btn btn-sm btn-warning mt-1"><i class="fas fa-calculator"></i>&nbsp;Calculate</a><br>
+				  <span class="help-block my-2"><span class="amt text-danger"></span></span>  
+				  
+				</div>
+
+				<!-- Textarea -->
+				<div class="form-group">
+				  <label class=" control-label" for="transaction[account]">Account Details</label>
+				                      
+				    <textarea class="form-control" id="transaction[account]" rows="5" cols="80" placeholder="Enter Wallet/Bank Account Details" name="transaction[account]"></textarea>
+				  </div>
+				
+				<input type="hidden" name="transaction[type]" id="type" value="">
+
+
+
+				<!-- Button -->
+				<div class="form-group">
+				  <label class="col-md-4 control-label" for="submit"></label>
+				  <div class="mx-auto">
+				    <button id="submit" name="submit" class="btn btn-success mb-4"><i class="fas fa-share-square"></i>&nbsp;Submit </button>
+				  </div>
+				</div>
+
+				</fieldset>
+				</form>
+                
+		</div>
+</body>
+<div class="text-center text-white py-3 fixed-bottom" style="background-color: rgba(48,60,108,1);">
+          	Designed, Developed and Maintained by Vishnu Manikantan (WhatsApp: 9061188095) for
+            <span class="home-link"><strong>Buy/Sell Point</strong></span>
+</div>
+<script>
+	
+	var type = document.getElementById("type");
+	var account = document.forms["transactionForm"]["transaction[account]"];
+	var amount = document.forms["transactionForm"]["transaction[amount]"];	
+	var x = document.getElementById("transaction[name]");
+	var result = document.querySelector(".amt");
+	var calculate = document.getElementById("calculate");
+	var submit = document.getElementById("submit");
+function transaction(){
+	if(x.value == ""){
+		window.alert("Enter transaction type....");
+		x.focus();
+		return false;
+	}
+	else if(amount.value == ""){
+		window.alert("Enter an amount....");
+		amount.focus();
+		return false;
+	}
+	else if((Number(amount.value)<15)||(Number(amount.value)>100)){
+		window.alert("Enter an amount greater than or equal to 15 and less than or equal to 100....");
+		amount.focus();
+		return false;
+	}
+	else if(account.value == ""){
+		window.alert("Enter account details....");
+		account.focus();
+	}
+	else{
+		type.value = x.options[x.selectedIndex].text.substr(0,4);
+		console.log(type.value);
+		console.log(x.options[x.selectedIndex].text.substr(0,4));
+		 document.forms["transactionForm"].submit();
+		return true;
+	}
+
+	
+}
+
+calculate.addEventListener("click", function(){
+	if((Number(amount.value)>=15)&&(Number(amount.value)<=100)){
+		var str = x.value;
+		if(str == "pmbuy"){
+			 var rate = <%= rates["pmbuy"] %>
+		}else if(str == "pmsell"){
+			 var rate = <%= rates["pmsell"] %>
+		}else if(str == "advsell"){
+			 var rate = <%= rates["advsell"] %>
+		}else if(str == "advbuy"){
+			 var rate = <%= rates["advbuy"] %>
+		}else if(str == "payeerbuy"){
+			 var rate = <%= rates["payeerbuy"] %>
+		}else if(str == "payeersell"){
+			 var rate = <%= rates["payeersell"] %>
+		}else if(str == "paypalbuy"){
+			 var rate = <%= rates["paypalbuy"] %>
+		}else if(str == "paypalsell"){
+			 var rate = <%= rates["paypalsell"] %>
+		}
+		if(x.options[x.selectedIndex].text.substr(0,3) == "Buy"){
+			result.innerHTML = "<b>You will have to pay &#x20b9;"+ (Number(amount.value) * Number(rate)) + "</b>";
+		}else if(x.options[x.selectedIndex].text.substr(0,4) == "Sell"){
+			result.innerHTML = "<b>You will recieve &#x20b9;"+ (Number(amount.value) * Number(rate)) + "</b>";
+		}
+		
+	}else{
+		result.innerHTML = "<b>Enter an amount not less than 15 and not more than 100</b>";
+	}
+});
+</script>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+
+</html>
