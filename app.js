@@ -77,6 +77,34 @@ function createAdmin(){
     });
 }
 createAdmin();
+//Set default rates
+function setRates(){
+    var temp = new Rates({
+        pmbuy: 75,
+        pmsell: 65,
+        advbuy: 75,
+        advsell: 63,
+        payeerbuy: 76,
+        payeersell: 65,
+        paypalbuy: 75,
+        paypalsell: 68
+    });
+    Rates.remove(function(err) {
+        if(err){
+            console.log(err.message);
+        }else{
+            console.log("Old rates deleted.");
+        }
+    });
+    Rates.create(temp, function(err, newRates) {
+        if(err){
+            console.log("Some error occured \n"+ err.message);
+        }else{
+            console.log("Default rates set");
+        }
+    });
+}
+setRates();
 
 
 
