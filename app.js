@@ -8,8 +8,8 @@ var express     = require("express"),
     nodemailer = require("nodemailer"),
     User = require("./models/user"),
     Transaction = require("./models/transaction"),
-    Rates = require("./models/rates"),
-    tranId = 1000000;
+    Rates = require("./models/rates");
+    // tranId = 1000000;
     
     
 
@@ -78,7 +78,9 @@ function createAdmin(){
 }
 createAdmin();
 
-
+function tranId(){
+    
+}
 
 
 
@@ -196,52 +198,58 @@ app.get("/userd", isLoggedIn, function(req, res) {
 
 //Handle new transaction request
 app.post("/userd", isLoggedIn, function(req, res) {
-    req.body.transaction.transactionId = ++tranId;
-    req.body.transaction.author = req.user;
-        
-    
-   Transaction.create(req.body.transaction, function(err, newTransaction){
-      if(err || !(newTransaction)){
-          console.log(err);
-          req.flash("error", err.message);
-          res.redirect("/userd");
-      }else{
-          Rates.findOne({isUpdated: true}, function(err, today){
-            if(err || !(today)){
-               console.log(err);
-               req.flash("error", err.message);
-               res.redirect("/userd"); 
-            }else{
-                console.log("I am in \n");
-                newTransaction.rate = today[newTransaction.name];
-                newTransaction.payable = Number(newTransaction.amount) * Number(newTransaction.rate);
-                newTransaction.save();
-                req.user.transactions.push(newTransaction);
-                req.user.save();
-                req.flash("success", "Your order placed successfully....");
-                var message ="Your order is placed with Transaction ID "+ newTransaction.transactionId + "is placed successfully. \n\n We will contact you via email or phone to complete the transaction.\n\nWith Regards,\nBuy/Sell Point\nEmail: admin@buysellpoint.in\nPhone:9562308197\nWebsite: www.buysellpoint.in\n\n\n\nP.S.: You cannot reply to this mail.\nInstead contact us at admin@buysellpoint.in"; 
-            	var mailOptions = {
-              	from: {name: 'Buy/Sell Point', address:"vm23526@gmail.com"},
-              	to: newTransaction.author.email,
-              	cc:['baby.manikantan@gmail.com'],
-              	subject: 'Reg: Buy/Sell Order',
-              	text: message,
-            	};
-            	transporter.sendMail(mailOptions, function(error, info){
-            	  if (error) {
-            	  	console.log(error);
-            	  	req.flash("error","No Email has been sent to your email...");
-            	  	res.redirect("/userd");
-            	  }else{
-            	      console.log("\nNo mail sending error.\n");
-            	  }
-            	}); 
-                res.redirect("/userd");
-            }
-        });
-          
-      } 
-   }); 
+    Transaction.countDocuments({},function(err, count){
+       if(err){
+           req.flash("error",err.message);
+           res.redirect("back");
+       }else{
+           console.log("\n"+count+"\n");
+           req.body.transaction.transactionId = Number(count)+100000;
+            req.body.transaction.author = req.user;
+            Transaction.create(req.body.transaction, function(err, newTransaction){
+                  if(err || !(newTransaction)){
+                      console.log(err);
+                      req.flash("error", err.message);
+                      res.redirect("/userd");
+                  }else{
+                      Rates.findOne({isUpdated: true}, function(err, today){
+                        if(err || !(today)){
+                           console.log(err);
+                           req.flash("error", err.message);
+                           res.redirect("/userd"); 
+                        }else{
+                            console.log("I am in \n");
+                            newTransaction.rate = today[newTransaction.name];
+                            newTransaction.payable = Number(newTransaction.amount) * Number(newTransaction.rate);
+                            newTransaction.save();
+                            req.user.transactions.push(newTransaction);
+                            req.user.save();
+                            req.flash("success", "Your order placed successfully....");
+                            var message ="Your order is placed with Transaction ID "+ newTransaction.transactionId + " is placed successfully. \n\n We will contact you via email or phone to complete the transaction.\n\nWith Regards,\nBuy/Sell Point\nEmail: admin@buysellpoint.in\nPhone:9562308197\nWebsite: www.buysellpoint.in\n\n\n\nP.S.: You cannot reply to this mail.\nInstead contact us at admin@buysellpoint.in"; 
+                        	var mailOptions = {
+                          	from: {name: 'Buy/Sell Point', address:"vm23526@gmail.com"},
+                          	to: newTransaction.author.email,
+                          	cc:['baby.manikantan@gmail.com'],
+                          	subject: 'Reg: Buy/Sell Order',
+                          	text: message,
+                        	};
+                        	transporter.sendMail(mailOptions, function(error, info){
+                        	  if (error) {
+                        	  	console.log(error);
+                        	  	req.flash("error","No Email has been sent to your email...");
+                        	  	res.redirect("/userd");
+                        	  }else{
+                        	      console.log("\nNo mail sending error.\n");
+                        	  }
+                        	}); 
+                            res.redirect("/userd");
+                        }
+                    });
+                      
+                  } 
+               }); 
+             } 
+    });
 });
 
 //Display pending transactions
@@ -292,7 +300,7 @@ app.post("/:id/complete", isAdminIn, function(req, res){
           res.redirect("back");
       } else{
               req.flash("success","Successfully updated....");
-              var message ="Your order placed with Transaction ID "+ transaction.transactionId + "has been completed successfully\n\n"+ transaction.status +"\n\nWith Regards,\nBuy/Sell Point\nPhone:9562308197\nEmail: admin@buysellpoint.in\nWebsite: www.buysellpoint.in\n\n\n\nP.S.: You cannot reply to this mail.\nInstead contact us at admin@buysellpoint.in"; 
+              var message ="Your order placed with Transaction ID "+ transaction.transactionId + " has been completed.\n\n"+"\n\nWith Regards,\nBuy/Sell Point\nPhone:9562308197\nEmail: admin@buysellpoint.in\nWebsite: www.buysellpoint.in\n\n\n\nP.S.: You cannot reply to this mail.\nInstead contact us at admin@buysellpoint.in"; 
               var mailOptions = {
               	from: {name: 'Buy/Sell Point', address:"vm23526@gmail.com"},
               	to: transaction.author.email,
@@ -306,7 +314,7 @@ app.post("/:id/complete", isAdminIn, function(req, res){
             	  	res.redirect("/admind");
             	  }else{
             	      console.log("\nNo mail sending error...\n");
-            	      req.flash("success", "Email update sent to customer...")
+            	      req.flash("success", "Email update sent to customer...");
             	  }
             	});
               res.redirect("/admind");
